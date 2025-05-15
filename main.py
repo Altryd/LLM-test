@@ -2,7 +2,6 @@ import pytz
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-# from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 import logging
@@ -12,7 +11,7 @@ from telegram.ext import filters, ApplicationBuilder, ContextTypes, CommandHandl
 load_dotenv()
 # USER_ID = os.getenv('TELEGRAM_USER_ID')
 OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
-# Новый ключ для Chutes.AI поскольку openrouter только 50 free дает
+# Новый ключ для Chutes.AI поскольку openrouter только 50 free requests дает
 CHUTES_API_KEY = os.getenv('CHUTES_API_KEY')
 TELEGRAM_API_KEY = os.getenv('TELEGRAM_API_KEY')
 MAX_HISTORY = 5
@@ -69,54 +68,6 @@ def format_history(history):
 
 # Цепочка LangChain
 chain = prompt_template | llm
-
-
-# Чат с памятью некоторой
-def console_chat():
-    conversation_history = []  # список (user_input, bot_response)
-    print("MysticGuideBot is ready! Type your message, '/clear' to reset history, or 'exit' to quit.")
-
-    while True:
-        user_input = input("You: ")
-        if user_input.lower() == 'exit':
-            print("MysticGuide: Farewell, my friend. I'll be here when you need me.")
-            break
-        if user_input.lower() == '/clear':
-            conversation_history.clear()
-            print("MysticGuide: My portal is cleared. Let's start anew!")
-            continue
-        if not user_input.strip():
-            print(
-                "MysticGuide: Hmm, a silent thought? Share something, and I'll guide you!")
-            continue
-
-        current_time = get_samara_time()
-
-        history_text = format_history(conversation_history)
-
-        # Вызываем лангчейн
-        try:
-            response = chain.invoke({
-                "current_time": current_time,
-                "history": history_text,
-                "extra_context": user_input
-            })
-            bot_response = response.content
-
-            conversation_history.append((user_input, bot_response))
-            if len(conversation_history) > MAX_HISTORY:
-                # Удаляем сообщение если контекст переполнен
-                conversation_history.pop(0)
-
-            print(f"MysticGuide: {bot_response}")
-        except Exception as e:
-            print(
-                f"MysticGuide: Oh, there was a glitch in my portal! Error: {str(e)}")
-
-
-# Запустим
-# if __name__ == "__main__":
-#    console_chat()
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
