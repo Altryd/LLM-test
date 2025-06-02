@@ -25,7 +25,8 @@ class Tokenizer:
         self.lemmatizer = WordNetLemmatizer()
 
     @classmethod
-    def eliminate_stopwords(cls, tokenized_list: List["str"], stopwords=stopwords.words('english')):
+    def eliminate_stopwords(
+            cls, tokenized_list: List["str"], stopwords=stopwords.words('english')):
         output = []
         for token in tokenized_list:
             if token in stopwords:
@@ -48,9 +49,13 @@ if __name__ == '__main__':
     nltk.download('wordnet')
 
     train_ratio = 0.7
-    pos_len, neg_len = len(movie_reviews.fileids('pos')), len(movie_reviews.fileids('neg'))
-    train_dataset_ids = movie_reviews.fileids('pos')[0:int(train_ratio*pos_len)] + movie_reviews.fileids('neg')[0:int(train_ratio*neg_len)]
-    test_dataset_ids = movie_reviews.fileids('pos')[int(train_ratio*pos_len):] + movie_reviews.fileids('neg')[int(train_ratio*neg_len):]
+    pos_len, neg_len = len(
+        movie_reviews.fileids('pos')), len(
+        movie_reviews.fileids('neg'))
+    train_dataset_ids = movie_reviews.fileids('pos')[0:int(
+        train_ratio * pos_len)] + movie_reviews.fileids('neg')[0:int(train_ratio * neg_len)]
+    test_dataset_ids = movie_reviews.fileids('pos')[int(
+        train_ratio * pos_len):] + movie_reviews.fileids('neg')[int(train_ratio * neg_len):]
     train_dataset = []  # first item - id, second item will be label
     test_dataset = []
     for _id in train_dataset_ids:
@@ -66,9 +71,15 @@ if __name__ == '__main__':
             test_dataset.append([_id, 0])
 
     tokenizer = Tokenizer()
-    X_train_tokenized = [tokenizer.tokenize_text(movie_reviews.raw(item[0])) for item in train_dataset]
+    X_train_tokenized = [
+        tokenizer.tokenize_text(
+            movie_reviews.raw(
+                item[0])) for item in train_dataset]
     Y_train = np.array([item[1] for item in train_dataset])
-    X_test_tokenized = [tokenizer.tokenize_text(movie_reviews.raw(item[0])) for item in test_dataset]
+    X_test_tokenized = [
+        tokenizer.tokenize_text(
+            movie_reviews.raw(
+                item[0])) for item in test_dataset]
     Y_test = np.array([item[1] for item in test_dataset])
 
     vectorizer = CountVectorizer(max_features=10000)
